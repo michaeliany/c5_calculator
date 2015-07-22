@@ -1,5 +1,6 @@
 <!--
-This will be a Lego themed calculator utilizing Bootstrap & jQuery. At inception, blue blocks for key background, white block for display background. If it looks too busy, will switch so that only the border will be Lego. If that doesn't do the trick, I will make the buttons appear to be Legos. I'd like to put an animation of a bunch of Lego blocks being put together as keys are being pressesd and then slowly coming together to form a complete figure. 
+This will be a Lego-themed calculator utilizing Bootstrap & jQuery. The main audience intended is children 12 and under but of course, open to all ages. Basic operations (while meeting project scope) is goal at this time. At inception, the design is blue blocks for key background, white block for display background. If it looks too busy, will switch so that only the border will be Lego. If that doesn't do the trick, I will make the buttons appear to be Legos. I'd like to put an animation (placed to the left of the calculator) of a bunch of Lego blocks being put together as keys are being pressed and then slowly coming together to form a complete figure. 
+Possibly, i will scrap the lego theme as a default and instead add a button that transforms (using jQuery addClass function) the basic calculator into a Lego calculator, or vice versa. Still undecided.
 
 Known Issues and Resolutions
 1) display/results display is not showing up despite Bootstrap row and column. 
@@ -45,14 +46,14 @@ Known Issues and Resolutions
 		background-image: url(http://cdn.appstorm.net/windows.appstorm.net/files/2011/10/lego_large.jpg);
 	}
 
-		.number .operator .clear .decimal .equalSign h1 {
+		.number, .operator, .extra, h1 {
 			text-align: center;
 			font-family: 'Roboto Mono';
 			font-size: 3em;
 			border: 1em solid black;
 		}
 
-		.result_display {
+		.resultDisplay {
 			text-align: right;
 			font-family: 'Roboto Mono';
 			font-size: 3em;
@@ -64,7 +65,7 @@ Known Issues and Resolutions
 			overflow: hidden;
 		}
 
-		#scroll_text {
+		#scrollText {
 			position: absolute;
 			white-space: nowrap;
 		}
@@ -72,68 +73,91 @@ Known Issues and Resolutions
 	</style>
 
 	<script>
+		//function to have scrolling text at start before any keys are pressed... not working at this time: just the basic outline code for now.
 		function scroll() {
-			$("span").append("Ready to calculate!");
-			$("scroll_text").css("left", $("scroll").width());
-			$("scroll_text").animate({
-				left: "-=" + ($("scroll").width() + $("scroll_text").width())}, 8000, function() {
+			//$("span").append("Ready to calculate!");
+			$("#scrollText").css("left", $(".scroll").width());
+			$("#scrollText").animate({
+				left: "-=" + ($(".scroll").width() + $("#scrollText").width())}, 8000, function() {
 						scroll();
 				});
 		}
 
+		function addMe ()
+
+/*
+		if ($("button").click).hide()
+
 		scroll();
+
+		function inputDigit (digit) {
+
+		}
+
+		function addition(operand1,operand2) {
+			var result = operand1 + operand2;
+			var 
+		}
+*/
 	</script>
 
 </head>
 <body>
 
-<div class="main_container">
-<div class="display">
-	<div class="header row">
-		<h1>Calculator</h1>
+<div class="container">
+	<div class="display">
+		<div class="header row">
+			<h1>Calculator</h1>
+		</div>
+
+		<div class="top row">
+			<div class="col-xs-12" id="scroll">
+			<span id="scrollTtext">Ready to Calculate!</span>
+			<input type="text" name="input1" id="input1" placeholder="0">
+			<input type="text" name="input2" id="input2" placeholder="0">
+			<input type="button" name="addMe" value="Add Me" onclick="addMe(input1.val, input2.val)"
+			<input type="text" name="resultDisplay" id="resultDisplay">
+			
+			</div>
+		</div>
 	</div>
 
-	<div class="top row">
-		<div class="col-xs-12 result_display" id="scroll"><span id="scroll_text">Ready to Calculate!</span></div>
-	</div>
-</div>
+	<div class="keys">
+		<div class="first row">
+			<div class="col-xs-3 extra"><button id="signInversion">&#43;&#47;&#45;</button></div>
+			<div class="col-xs-3 extra"><button id="exponent">X<sup>y</sup></button></div>
+			<div class="col-xs-3 extra"><button id="clear">CLEAR</button></div>
+			<div class="col-xs-3 extra"><button id="allClear">AC</button></div>
+		</div>
 
-<div class="keys">
-	<div class="first row">
-		<div class="col-xs-3 operator"><button>(</button></div>
-		<div class="col-xs-3 operator"><button>)</button></div>
-		<div class="col-xs-3 operator"><button>%</button></div>
-		<div class="col-xs-3 clear"><button>AC</button></div>
-	</div>
+		<div class="second row">
+			<div class="col-xs-3 number"><button id="num7">7</button></div>
+			<div class="col-xs-3 number"><button id="num8">8</button></div>
+			<div class="col-xs-3 number"><button id="num9">9</button></div>
+			<div class="col-xs-3 operator"><button id="divNumber">&#47;</button></div>
+		</div>
 
-	<div class="second row">
-		<div class="col-xs-3 number"><button>7</button></div>
-		<div class="col-xs-3 number"><button>8</button></div>
-		<div class="col-xs-3 number"><button>9</button></div>
-		<div class="col-xs-3 operator"><button>/</button></div>
-	</div>
+		<div class="third row">
+			<div class="col-xs-3 number"><button id="num4">4</button></div>
+			<div class="col-xs-3 number"><button id="num5">5</button></div>
+			<div class="col-xs-3 number"><button id="num6">6</button></div>
+			<div class="col-xs-3 operator"><button id="multNumber">&#42;</button></div>
+		</div>
 
-	<div class="third row">
-		<div class="col-xs-3 number"><button>4</button></div>
-		<div class="col-xs-3 number"><button>5</button></div>
-		<div class="col-xs-3 number"><button>6</button></div>
-		<div class="col-xs-3 operator"><button>*</button></div>
-	</div>
+		<div class="fourth row">
+			<div class="col-xs-3 number"><button id="num1">1</button></div>
+			<div class="col-xs-3 number"><button id="num2">2</button></div>
+			<div class="col-xs-3 number"><button id="num3">3</button></div>
+			<div class="col-xs-3 operator"><button id="subtractNumber">&#45;</button></div>
+		</div>
 
-	<div class="fourth row">
-		<div class="col-xs-3 number"><button>1</button></div>
-		<div class="col-xs-3 number"><button>2</button></div>
-		<div class="col-xs-3 number"><button>3</button></div>
-		<div class="col-xs-3 operator"><button>-</button></div>
+		<div class="fifth row">
+			<div class="col-xs-3 number"><button id="num0">0</button></div>
+			<div class="col-xs-3 extra"><button id="decimal">&#46;</button></div>
+			<div class="col-xs-3 operator"><button id="equalSign">=</button></div>
+			<div class="col-xs-3 operator"><button id="addNumber">&#43;</button></div>
+		</div>
 	</div>
-
-	<div class="fifth row">
-		<div class="col-xs-3 number"><button>0</button></div>
-		<div class="col-xs-3 decimal"><button>.</button></div>
-		<div class="col-xs-3 equalSign"><button>=</button></div>
-		<div class="col-xs-3 operator"><button>+</button></div>
-	</div>
-</div>
 </div>
 
 </body>

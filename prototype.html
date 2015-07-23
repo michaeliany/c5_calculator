@@ -17,13 +17,18 @@ Workflow:
 11) FUTURE! user can press a new digit a) existing result is saved in [0] position, replacing the previous content
 
 Known Issues and Resolutions
-1) display/results display is not showing up despite Bootstrap row and column. 
+1) display/results display is not showing up despite Bootstrap row and column. RESOLVED
 	a) I tried to add a height, no luck. maybe my code is wrong? 
 	b) I added some text, no luck.
+	c) 
 2) Scrolling text indicating that the calculator is ready rather than that annoying blinking 0.
 	a) not working, perhaps i am not appending it correctly.
-3) buttons clicked are not showing up in display.
-	a) no idea why at this time.
+3) first button clicked is not showing number in display. RESOLVED
+	a) moved script from <head> to bottom of <body>. some of it is running now however, digits are still not showing in display. The culprit is likely the inputDisplay function.
+	b) testing the button click function and it seems i may not be targetting the proper element value. 
+	c) added class to the button rather than the parent div. Changed from .val() to .attr() to get the value of the button. 
+4) display shows "7" even when other numbers are clicked. 2nd number clicked shows "undefined"
+	a) console is logging the correct digits but display is not.
 -->
 <!DOCTYPE html>
 <html>
@@ -34,6 +39,10 @@ Known Issues and Resolutions
 
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
+	<!-- jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+	</script>
+
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
@@ -42,10 +51,6 @@ Known Issues and Resolutions
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
-	</script>
-
-	<!-- jQuery -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
 	</script>
 
 	<!-- importing roboto font -->
@@ -77,7 +82,7 @@ Known Issues and Resolutions
 		height: 2.5em;
 	}
 
-	.number, .operator, .extra {
+	.key {
 		text-align: center;
 		font-family: 'Roboto Mono';
 		font-size: 1.2em;
@@ -116,128 +121,7 @@ Known Issues and Resolutions
 
 	</style>
 
-	<script>
-		var theBrain["",""]; //array to store inputed numbers before and after the operator
-		var operator = "";
-		var arrayPointer = [0];
-
-		/* function to have scrolling text at start before any keys are pressed... not working at this time: just the basic outline code for now.
-		function scroll() {
-			//$("span").append("Ready to calculate!");
-			$("#scrollText").css("left", $(".scroll").width());
-			$("#scrollText").animate({
-				left: "-=" + ($(".scroll").width() + $("#scrollText").width())}, 8000, function() {
-						scroll();
-				});
-		}
-		*/
-		//after a digit is pushed, get value & save it to digit variable
-		$(".number").click(function(){
-			var digit = $(".number").val();
-			inputDigit(digit);
-		})
-
-		$(".operator").click(function(){
-			var operatorSign = $(".operator").val();
-			$("#calculationDisplay").val(operatorSign);
-			inputOperator(operator);
-		})
-
-		$("#equalSign").click(function(){
-			calculate();
-		})
-
-		$("allClear").click(functon(){
-			digit = "";
-			theBrain = ["", ""];
-			arrayPointer = theBrain[0];
-			operator = "";
-			$("calculationDisplay").val("0");
-			$("resultDisplay").val("0")
-		})
-
-		//this function will take the input value and push it back to the calc screen as well as save the digit into our array
-		function inputDigit(digit) {
-			//var digit = $(".number").val();
-			if ($("#calculationDisplay").val() == "") {
-				var inputValue = digit;
-				$("#calculationDisplay").val(inputValue);
-			}
-			else {
-				var newValue = digit + inputValue;
-				$("#calculationDisplay").val(newValue);
-			}
-			theBrain[arrayPointer] += digit;
-		}
-
-		function inputOperator(operator) {
-			arrayPointer = theBrain[1];
-			operator = $("operator").val();
-		}
-
-		function calculate(num1,num2,operator) {
-			var num1 = theBrain[0];
-			var num2 = theBrain[1];
-			switch(operator) {
-				case"+": 
-					var result = addMe(num1,num2);
-					$("resultDisplay").val(result);
-					break;
-				case"-": 
-					var result = subtractMe(num1,num2);
-					$("resultDisplay").val(result);
-					break;
-				case"/": 
-					var result = multiplyMe(num1,num2);
-					$("resultDisplay").val(result);
-					break;
-				case"+": 
-					var result = divideMe(num1,num2);
-					$("resultDisplay").val(result);
-					break;
-			}
-		}
-
-		function addMe (operand1, operand2) {
-			var result = parseInt(operand1) + parseInt(operand2);
-			$("#resultDisplay").val(result);
-		}  
-
-		function subtractMe (operand1, operand2) {
-			var result = parseInt(operand1) - parseInt(operand2);
-			$("#resultDisplay").val(result);
-		}
-
-		function multiplyMe (operand1, operand2) {
-			var result = parseInt(operand1) * parseInt(operand2);
-			$("#resultDisplay").val(result);
-		}
-
-		function divideMe (operand1, operand2) {
-			if (operand2 == 0) {
-				return NaN;
-			}
-			var result = parseInt(operand1) / parseInt(operand2);
-			$("#resultDisplay").val(result);
-		}
-
-		
-
-/*
-		if ($("button").click).hide()
-
-		scroll();
-
-		function inputDigit (digit) {
-
-		}
-
-		function addition(operand1,operand2) {
-			var result = operand1 + operand2;
-			var 
-		}
-*/
-	</script>
+	
 
 </head>
 <body>
@@ -251,7 +135,7 @@ Known Issues and Resolutions
 		<div class="calculationScreen row">
 			<div class="col-xs-12" id="scroll">
 				<span id="scrollTtext">Ready to Calculate!</span>
-				<input type="text" name="calculationDisplay" id="calculationDisplay" value=""placeholder="0">
+				<input type="text" name="calculationDisplay" id="calculationDisplay" value="" placeholder="0">
 			</div>
 		</div>
 
@@ -265,41 +149,146 @@ Known Issues and Resolutions
 
 	<div class="keysArea">
 		<div class="first row">
-			<div class="col-xs-3 extra"><button id="signInversion">&#43;&#47;&#45;</button></div>
-			<div class="col-xs-3 extra"><button id="exponent">X<sup>y</sup></button></div>
-			<div class="col-xs-3 extra"><button id="clear">CLEAR</button></div>
-			<div class="col-xs-3 extra"><button id="allClear">AC</button></div>
+			<div class="col-xs-3 key"><button id="signInversion">&#43;&#47;&#45;</button></div>
+			<div class="col-xs-3 key"><button id="exponent">X<sup>y</sup></button></div>
+			<div class="col-xs-3 key"><button id="clear">CLEAR</button></div>
+			<div class="col-xs-3 key"><button id="allClear">AC</button></div>
 		</div>
 
 		<div class="second row">
-			<div class="col-xs-3 number"><button value="7">7</button></div>
-			<div class="col-xs-3 number"><button value="8">8</button></div>
-			<div class="col-xs-3 number"><button value="9">9</button></div>
-			<div class="col-xs-3 operator"><button value="/">&#47;</button></div>
+			<div class="col-xs-3 key"><button class="number" value="7">7</button></div>
+			<div class="col-xs-3 key"><button class="number" value="8">8</button></div>
+			<div class="col-xs-3 key"><button class="number" value="9">9</button></div>
+			<div class="col-xs-3 key"><button class="operator"value="/">&#47;</button></div>
 		</div>
 
 		<div class="third row">
-			<div class="col-xs-3 number"><button value="4">4</button></div>
-			<div class="col-xs-3 number"><button value="5">5</button></div>
-			<div class="col-xs-3 number"><button value="6">6</button></div>
-			<div class="col-xs-3 operator"><button value="*">&#42;</button></div>
+			<div class="col-xs-3 key"><button class="number" value="4">4</button></div>
+			<div class="col-xs-3 key"><button class="number" value="5">5</button></div>
+			<div class="col-xs-3 key"><button class="number" value="6">6</button></div>
+			<div class="col-xs-3 key"><button class="operator" value="*">&#42;</button></div>
 		</div>
 
 		<div class="fourth row">
-			<div class="col-xs-3 number"><button value="1">1</button></div>
-			<div class="col-xs-3 number"><button value="2">2</button></div>
-			<div class="col-xs-3 number"><button value="3">3</button></div>
-			<div class="col-xs-3 operator"><button value="-">&#45;</button></div>
+			<div class="col-xs-3 key"><button class="number" value="1">1</button></div>
+			<div class="col-xs-3 key"><button class="number" value="2">2</button></div>
+			<div class="col-xs-3 key"><button class="number" value="3">3</button></div>
+			<div class="col-xs-3 key"><button class="operator" value="-">&#45;</button></div>
 		</div>
 
 		<div class="fifth row">
-			<div class="col-xs-3 number"><button value="0">0</button></div>
-			<div class="col-xs-3 extra"><button value=".">&#46;</button></div>
-			<div class="col-xs-3 extra"><button value="=" id="equalSign">=</button></div>
-			<div class="col-xs-3 operator"><button value="+">&#43;</button></div>
+			<div class="col-xs-3 key"><button class="number" value="0">0</button></div>
+			<div class="col-xs-3 key"><button id="decimal" value=".">&#46;</button></div>
+			<div class="col-xs-3 key"><button id="equalSign" value="=">=</button></div>
+			<div class="col-xs-3 key"><button class="operator" value="+">&#43;</button></div>
 		</div>
 	</div>
 </div>
 
+<script>
+		var theBrain = ["",""]; //array to store inputed numbers before and after the operator
+		var operator = "";
+		var arrayPointer = 0;
+
+		/* function to have scrolling text at start before any keys are pressed... not working at this time: just the basic outline code for now.
+		function scroll() {
+			//$("span").append("Ready to calculate!");
+			$("#scrollText").css("left", $(".scroll").width());
+			$("#scrollText").animate({
+				left: "-=" + ($(".scroll").width() + $("#scrollText").width())}, 8000, function() {
+						scroll();
+				});
+		}
+		*/
+		//after a digit is pushed, get value & save it to digit variable, run inputDisplay function which will set digit to display and save it to appropriate array position.
+	$(document).ready(function(){
+		$(".number").click(function(){
+			var digit = $(this).attr("value");
+			console.log(digit);
+			inputDigit(digit);
+		})
+	});
+
+		$(".operator").click(function(){
+			var operatorSign = $(this).attr("value");
+			$("#calculationDisplay").val(operatorSign);
+			inputOperator(operator);
+		})
+
+		$("#equalSign").click(function(){
+			calculate();
+		})
+
+		$("#allClear").click(function(){
+			digit = "";
+			theBrain = ["",""];
+			arrayPointer = theBrain[0];
+			operator = "";
+			$("calculationDisplay").val("0");
+			$("resultDisplay").val("0");
+		})
+
+		//this function will take the input value and push it back to the calc screen as well as save the digit into our array
+		function inputDigit(digit) {
+			var digit = $(".number").val();
+			if ($("#calculationDisplay").val() == "") {
+				var inputValue = digit;
+				$("#calculationDisplay").val(inputValue);
+			}
+			else {
+				var newValue = digit + inputValue;
+				$("#calculationDisplay").val(newValue);
+			}
+			theBrain[arrayPointer] += digit;
+		}
+
+		function inputOperator(operator) {
+			arrayPointer = 1;
+			operator = $("operator").val();
+		}
+
+		function calculate(num1,num2,operator) {
+			var num1 = theBrain[0];
+			var num2 = theBrain[1];
+			switch(operator) {
+				case"+": 
+					var result = addMe(num1,num2);
+					break;
+				case"-": 
+					var result = subtractMe(num1,num2);
+					break;
+				case"/": 
+					var result = multiplyMe(num1,num2);
+					break;
+				case"+": 
+					var result = divideMe(num1,num2);
+					break;
+			}
+		}
+
+		function addMe (num1, num2) {
+			var result = parseInt(num1) + parseInt(num2);
+			$("#resultDisplay").val(result);
+		}  
+
+		function subtractMe (num11, num2) {
+			var result = parseInt(num1) - parseInt(num2);
+			$("#resultDisplay").val(result);
+		}
+
+		function multiplyMe (num1, num2) {
+			var result = parseInt(num1) * parseInt(num2);
+			$("#resultDisplay").val(result);
+		}
+
+		function divideMe (num1, num2) {
+			if (operand2 == 0) {
+				return NaN;
+			}
+			var result = parseInt(num1) / parseInt(num2);
+			$("#resultDisplay").val(result);
+		}
+
+	</script>
 </body>
 </html>

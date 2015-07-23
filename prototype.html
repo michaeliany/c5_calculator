@@ -29,6 +29,7 @@ Known Issues and Resolutions
 	c) added class to the button rather than the parent div. Changed from .val() to .attr() to get the value of the button. 
 4) display shows "7" even when other numbers are clicked. 2nd number clicked shows "undefined"
 	a) console is logging the correct digits but display is not.
+
 -->
 <!DOCTYPE html>
 <html>
@@ -200,32 +201,11 @@ Known Issues and Resolutions
 				});
 		}
 		*/
-		//after a digit is pushed, get value & save it to digit variable, run inputDisplay function which will set digit to display and save it to appropriate array position.
-	$(document).ready(function(){
+		//when a digit is clicked, get value & save it to digit variable, run inputDisplay function which will set digit to display and save it to appropriate array position.
 		$(".number").click(function(){
 			var digit = $(this).attr("value");
 			console.log(digit);
 			inputDigit(digit);
-		})
-	});
-
-		$(".operator").click(function(){
-			var operatorSign = $(this).attr("value");
-			$("#calculationDisplay").val(operatorSign);
-			inputOperator(operator);
-		})
-
-		$("#equalSign").click(function(){
-			calculate();
-		})
-
-		$("#allClear").click(function(){
-			digit = "";
-			theBrain = ["",""];
-			arrayPointer = theBrain[0];
-			operator = "";
-			$("calculationDisplay").val("0");
-			$("resultDisplay").val("0");
 		})
 
 		//this function will take the input value and push it back to the calc screen as well as save the digit into our array
@@ -241,11 +221,32 @@ Known Issues and Resolutions
 			}
 			theBrain[arrayPointer] += digit;
 		}
+	
+		//when an operator is clicked
+		$(".operator").click(function(){
+			var operatorSign = $(this).attr("value");
+			console.log(operatorSign);
+			inputOperator(operator);
+		})
 
 		function inputOperator(operator) {
+			$("#calculationDisplay").val(operatorSign);
 			arrayPointer = 1;
 			operator = $("operator").val();
 		}
+
+		$("#equalSign").click(function(){
+			calculate();
+		})
+
+		$("#allClear").click(function(){
+			digit = "";
+			theBrain = ["",""];
+			arrayPointer = theBrain[0];
+			operator = "";
+			$("calculationDisplay").val("0");
+			$("resultDisplay").val("0");
+		})
 
 		function calculate(num1,num2,operator) {
 			var num1 = theBrain[0];

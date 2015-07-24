@@ -53,11 +53,17 @@ concatenate the operator to the first and second number. RESOLVED
 	a) corrected equalSign click function 
 8) calculate function is not working. will check to see if it is called properly. I am suspecting it is due to a typo.
 	a) i changed the calculate function's parameter from operator to operatorSign. This did not work, i think it is
-	because i assigned operatorSign within the function so it isn't being recognized globally.
+	because i assigned operatorSign within the function so it isn't being recognized globally. RESOLVED
 	b) i tried to set the global variable operator to the value of local variable operatorSign but it didnt work. I
 	tried it within the calculate function but operatorSign was not defined. I also tried within the operator click
 	function as well as the inputOperator function, no luck. i need to find out where i am able to change the global
 	variable value to match the inputted operator then my switch should work.
+	c) i was able to fix this by adding the operator as a parameter of the inputOperator function
+9) operator not being pushed out to display and hench, calculate function not being called. RESOLVED
+	a) rather than trying to get the operator button's value, i tried the html() and the text() attributes but no luck.
+	b) i was able to fix this by passing operator as a parameter in the inputOperator function.
+10) allClear is not working. Nothing happens once it is clicked. i thought i had written the appropriate code to reset
+	all values.
 
 -->
 <!DOCTYPE html>
@@ -240,42 +246,54 @@ concatenate the operator to the first and second number. RESOLVED
 			inputDigit(digit);
 		})
 
-		//this function will take the input value and push it back to the calc screen as well as save the digit into
-		// our array.
+		//the inputDigit function will take the input value and push it back to the calc screen as well as save the
+		// digit into our array.
+		//DWP THIS ONE
 		function inputDigit(digit) {
+			//we save the existing display value into a variable.
 			var value = $("#calculationDisplay").val();
+			//we concatenate the existing value with the newest digit and save it into a new variable.
 			var newValue = value + digit;
+			//we push out this new concatenated value to the display.
 			$("#calculationDisplay").val(newValue);
+			//the new digit is added to our array.
 			theBrain[arrayPointer] += digit;
 		}
 
 		//when an operator is clicked, get operator selected, set global operator variable to selected operator, run
-		//inputoperator function.
+		//inputOperator function.
 		$(".operator").click(function(){
 			operator = $(this).attr("value");
-			console.log(operator);
-			inputOperator();
+			console.log("operator is ", operator);
+			inputOperator(operator);
 		})
 
-		//concatenate the operator to the first number and push it back up the display, set pointer to the the 2nd
-		//array position.
+		//the inputOperator function takes in the operator as a parameter. Its role is to concatenate the operator to
+		//the first number and push it back up the display, set pointer to the the 2nd array position.
+		//DWP THIS ONE
 		function inputOperator(operator) {
+			//save the existing display into a variable.
 			var value = $("#calculationDisplay").val();
-			console.log("i am the" + value);
+			console.log("display value is ", value);
+			//concatenate the operator with the existing value and save it into a new variable.
 			var valueWithOperator = value + " " + operator + " ";
+			//push the new concatenated value to the display.
 			$("#calculationDisplay").val(valueWithOperator);
+			//set our array pointer to the 2nd position.
 			arrayPointer = 1;
 		}
 
-		//when the equal sign is clicked, we get the it, concatenate it, and push the back up to the display. We then
+		//when the equal sign is clicked, we get it, concatenate it, and push the back up to the display. We then
 		//run the calculate function.
 		$("#equalSign").click(function(){
 			var equalSign = $(this).attr("value");
 			console.log(equalSign);
 			var value = $("#calculationDisplay").val();
 			var valueWithEqualSign = value + " " + equalSign + " ";
+			console.log("valueWithEqualSign is ", valueWithEqualSign);
 			$("#calculationDisplay").val(valueWithEqualSign);
-			calculate();
+			console.log(theBrain, operator);
+			calculate(theBrain[0],theBrain[1], operator);
 		})
 		//enter key functionality
 		$(document).on("keyup", function(enter) {
@@ -286,12 +304,16 @@ concatenate the operator to the first and second number. RESOLVED
 
 		//the calculate function saves the array values into variables. It then runs the appropriate math which returns
 		//the result into a variable. The result is pushed out to the result display.
+		//the calculate function named and passes 3 parameters
 		function calculate(num1,num2,operator) {
+			//new variables that are assigned the respective values in our array
 			var num1 = theBrain[0];
 			var num2 = theBrain[1];
 
 			console.log(num1,num2)
+			//this switch takes in operator so that the switch knows which case to follow
 			switch(operator) {
+				//each case will do the math and save it in result. break indicates a stop to that specific code block.
 				case"+": 
 					var result = addMe(num1,num2);
 					break;
@@ -305,6 +327,7 @@ concatenate the operator to the first and second number. RESOLVED
 					var result = divideMe(num1,num2);
 					break;
 			};
+			//the math result is then pushed up to display
 			$(".resultDisplay").val(result)
 		}
 
@@ -331,11 +354,24 @@ concatenate the operator to the first and second number. RESOLVED
 			$("#resultDisplay").val(result);
 		}
 
+		//when clear is clicked, this resets the display to the previous value and wipes clean the digit variable.
+		//It also resets the appropriate array memory.
+		$("#clear").click(function(){
+			digit = "";
+			$("#calculationDisplay").val(value);
+			if(arrayPointer == 0) {
+				theBrain[0] = "";
+			}
+			else {
+				theBrain[1] = "";
+			}
+		});
+
 		//when the AC button is clicked, this resets all values and displays to their beginning values.
 		$("#allClear").click(function(){
 			digit = "";
 			theBrain = ["",""];
-			arrayPointer = theBrain[0];
+			arrayPointer = 0;
 			operator = "";
 			$("calculationDisplay").val("0");
 			$("resultDisplay").val("0");

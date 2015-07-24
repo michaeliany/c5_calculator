@@ -60,7 +60,8 @@ Known Issues and Resolutions
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
-	<!-- Latest compiled and minified JavaScript -->
+	<!-- Late
+	  st compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
 	</script>
 
@@ -250,6 +251,12 @@ Known Issues and Resolutions
 			$("#calculationDisplay").val(valueWithEqualSign);
 			calculate();
 		})
+
+		$(document).on("keyup", function(enter) {
+			if (enter.which == 13) {
+  				calculate();
+  			}
+		});
 
 		function calculate(num1,num2,operator) {
 			var num1 = theBrain[0];

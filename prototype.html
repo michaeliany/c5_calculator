@@ -27,8 +27,18 @@ Known Issues and Resolutions
 	a) moved script from <head> to bottom of <body>. some of it is running now however, digits are still not showing in display. The culprit is likely the inputDisplay function.
 	b) testing the button click function and it seems i may not be targetting the proper element value. 
 	c) added class to the button rather than the parent div. Changed from .val() to .attr() to get the value of the button. 
-4) display shows "7" even when other numbers are clicked. 2nd number clicked shows "undefined"
+4) display shows "7" even when other numbers are clicked. 2nd number clicked shows "undefined". operator displaying correctly however. RESOLVED
 	a) console is logging the correct digits but display is not.
+	b) reworked inputNumber function to concatenate properly. 
+5) while the first number is working fine, once an operator is selected, it wipes out the first #. I need to properly concatenate the operator to the first and second number. RESOLVED
+	a) corrected inputOperator function to properly concatenate
+6) equal sign not getting pushed out to display. RESOLVED
+	a) found i was targetting a class when it is an id. corrected.
+7) equal sign not properly concatenating RESOLVED
+	a) corrected equalSign click function 
+8) calculate function is not working. will check to see if it is called properly. I am suspecting it is due to a typo.
+	a) i changed the calculate function's parameter from operator to operatorSign. This did not work, i think it is because i assigned operatorSign within the function so it isn't being recognized globally.
+	b) i tried to set the global variable operator to the value of local variable operatorSign but it didnt work. I tried it within the calculate function but operatorSign was not defined. I also tried within the operator click function as well as the inputOperator function, no luck. i need to find out where i am able to change the global variable value to match the inputted operator then my switch should work.
 
 -->
 <!DOCTYPE html>
@@ -210,47 +220,42 @@ Known Issues and Resolutions
 
 		//this function will take the input value and push it back to the calc screen as well as save the digit into our array
 		function inputDigit(digit) {
-			var digit = $(".number").val();
-			if ($("#calculationDisplay").val() == "") {
-				var inputValue = digit;
-				$("#calculationDisplay").val(inputValue);
-			}
-			else {
-				var newValue = digit + inputValue;
-				$("#calculationDisplay").val(newValue);
-			}
+			var value = $("#calculationDisplay").val();
+			var newValue = value + digit;
+			$("#calculationDisplay").val(newValue);
 			theBrain[arrayPointer] += digit;
 		}
 	
 		//when an operator is clicked
 		$(".operator").click(function(){
 			var operatorSign = $(this).attr("value");
+			operator = operatorSign;
 			console.log(operatorSign);
-			inputOperator(operator);
+			inputOperator(operatorSign);
 		})
 
-		function inputOperator(operator) {
-			$("#calculationDisplay").val(operatorSign);
+		function inputOperator(operatorSign) {
+			var value = $("#calculationDisplay").val();
+			var valueWithOperator = value + " " + operatorSign + " ";
+			$("#calculationDisplay").val(valueWithOperator);
 			arrayPointer = 1;
-			operator = $("operator").val();
+			operator = operatorSign;
 		}
 
 		$("#equalSign").click(function(){
+			var equalSign = $(this).attr("value");
+			console.log(equalSign);
+			var value = $("#calculationDisplay").val();
+			var valueWithEqualSign = value + " " + equalSign + " ";
+			$("#calculationDisplay").val(valueWithEqualSign);
 			calculate();
-		})
-
-		$("#allClear").click(function(){
-			digit = "";
-			theBrain = ["",""];
-			arrayPointer = theBrain[0];
-			operator = "";
-			$("calculationDisplay").val("0");
-			$("resultDisplay").val("0");
 		})
 
 		function calculate(num1,num2,operator) {
 			var num1 = theBrain[0];
 			var num2 = theBrain[1];
+
+			console.log(num1,num2)
 			switch(operator) {
 				case"+": 
 					var result = addMe(num1,num2);
@@ -264,7 +269,8 @@ Known Issues and Resolutions
 				case"+": 
 					var result = divideMe(num1,num2);
 					break;
-			}
+			};
+			$(".resultDisplay").val(result)
 		}
 
 		function addMe (num1, num2) {
@@ -289,6 +295,15 @@ Known Issues and Resolutions
 			var result = parseInt(num1) / parseInt(num2);
 			$("#resultDisplay").val(result);
 		}
+
+		$("#allClear").click(function(){
+			digit = "";
+			theBrain = ["",""];
+			arrayPointer = theBrain[0];
+			operator = "";
+			$("calculationDisplay").val("0");
+			$("resultDisplay").val("0");
+		})
 
 	</script>
 </body>

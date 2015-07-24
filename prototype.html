@@ -1,18 +1,29 @@
 <!--
 Concept:
-This will be a Lego-themed calculator utilizing Bootstrap & jQuery. The main audience intended is children 12 and under but of course, open to all ages. Basic operations (while meeting project scope) is goal at this time. At inception, the design is blue blocks for key background, white block for display background. If it looks too busy, will switch so that only the border will be Lego. If that doesn't do the trick, I will make the buttons appear to be Legos. I'd like to put an animation (placed to the left of the calculator) of a bunch of Lego blocks being put together as keys are being pressed and then slowly coming together to form a complete figure. 
-Possibly, i will scrap the lego theme as a default and instead add a button that transforms (using jQuery addClass function) the basic calculator into a Lego calculator, or vice versa. Still undecided.
+This will be a Lego-themed calculator utilizing Bootstrap & jQuery. The main audience intended is children 12 and under
+but of course, open to all ages. Basic operations (while meeting project scope) is goal at this time. At inception, the
+design is blue blocks for key background, white block for display background. If it looks too busy, will switch so that
+only the border will be Lego. If that doesn't do the trick, I will make the buttons appear to be Legos. I'd like to put
+an animation (placed to the left of the calculator) of a bunch of Lego blocks being put together as keys are being
+pressed and then slowly coming together to form a complete figure.
+Possibly, i will scrap the lego theme as a default and instead add a button that transforms (using jQuery addClass
+function) the basic calculator into a Lego calculator, or vice versa. Still undecided.
 
 Workflow:
 1) upon page load, scroll() is called, informing the user that the calculator is ready to use.
-2) The first digit is pressed: a) scroll() is turned off, b)the digit is pushed to the display, c) the digit is saved in 0 position in the array
-3) subsequent digits pressed will 1) new digit is added to existing digit(s) in the display 2) new digit is concatenated to the growing string in 0 position inside array
-4) Operator is chosen. a) operator will show in display b) operator stored in variable for later use in calculate function c) pointer now directed at [1] position inside array 
+2) The first digit is pressed: a) scroll() is turned off, b)the digit is pushed to the display, c) the digit is saved
+in 0 position in the array
+3) subsequent digits pressed will 1) new digit is added to existing digit(s) in the display 2) new digit is concatenated
+ to the growing string in 0 position inside array
+4) Operator is chosen. a) operator will show in display b) operator stored in variable for later use in calculate
+function c) pointer now directed at [1] position inside array
 5) 2nd number is pressed a) it is pushed up to display b) it is stored into array in [1] position
 6) subsequent digits follow step 3) only they are stored in [1] array position
 7) FUTURE! subsequent operators can be chosen and will create a new position in our array
 8) FUTURE! sign inversion will need to be accounted for
-9) Equal sign is pressed a) equal sign to display b) grab the 2 elements in our array c) convert them from strings to numbers d) call a function to run through our switch and the appropriate math function. e) spit out result to the display.
+9) Equal sign is pressed a) equal sign to display b) grab the 2 elements in our array c) convert them from strings to
+numbers d) call a function to run through our switch and the appropriate math function. e) spit out result to the
+display.
 10) User can then AllClear to start anew 
 11) FUTURE! user can press a new digit a) existing result is saved in [0] position, replacing the previous content
 
@@ -24,21 +35,29 @@ Known Issues and Resolutions
 2) Scrolling text indicating that the calculator is ready rather than that annoying blinking 0.
 	a) not working, perhaps i am not appending it correctly.
 3) first button clicked is not showing number in display. RESOLVED
-	a) moved script from <head> to bottom of <body>. some of it is running now however, digits are still not showing in display. The culprit is likely the inputDisplay function.
-	b) testing the button click function and it seems i may not be targetting the proper element value. 
-	c) added class to the button rather than the parent div. Changed from .val() to .attr() to get the value of the button. 
-4) display shows "7" even when other numbers are clicked. 2nd number clicked shows "undefined". operator displaying correctly however. RESOLVED
+	a) moved script from <head> to bottom of <body>. some of it is running now however, digits are still not showing in
+	display. The culprit is likely the inputDisplay function.
+	b) testing the button click function and it seems i may not be targeting the proper element value.
+	c) added class to the button rather than the parent div. Changed from .val() to .attr() to get the value of the
+	button.
+4) display shows "7" even when other numbers are clicked. 2nd number clicked shows "undefined". operator displaying
+correctly however. RESOLVED
 	a) console is logging the correct digits but display is not.
 	b) reworked inputNumber function to concatenate properly. 
-5) while the first number is working fine, once an operator is selected, it wipes out the first #. I need to properly concatenate the operator to the first and second number. RESOLVED
+5) while the first number is working fine, once an operator is selected, it wipes out the first #. I need to properly
+concatenate the operator to the first and second number. RESOLVED
 	a) corrected inputOperator function to properly concatenate
 6) equal sign not getting pushed out to display. RESOLVED
-	a) found i was targetting a class when it is an id. corrected.
+	a) found i was targeting a class when it is an id. corrected.
 7) equal sign not properly concatenating RESOLVED
 	a) corrected equalSign click function 
 8) calculate function is not working. will check to see if it is called properly. I am suspecting it is due to a typo.
-	a) i changed the calculate function's parameter from operator to operatorSign. This did not work, i think it is because i assigned operatorSign within the function so it isn't being recognized globally.
-	b) i tried to set the global variable operator to the value of local variable operatorSign but it didnt work. I tried it within the calculate function but operatorSign was not defined. I also tried within the operator click function as well as the inputOperator function, no luck. i need to find out where i am able to change the global variable value to match the inputted operator then my switch should work.
+	a) i changed the calculate function's parameter from operator to operatorSign. This did not work, i think it is
+	because i assigned operatorSign within the function so it isn't being recognized globally.
+	b) i tried to set the global variable operator to the value of local variable operatorSign but it didnt work. I
+	tried it within the calculate function but operatorSign was not defined. I also tried within the operator click
+	function as well as the inputOperator function, no luck. i need to find out where i am able to change the global
+	variable value to match the inputted operator then my switch should work.
 
 -->
 <!DOCTYPE html>
@@ -171,7 +190,7 @@ Known Issues and Resolutions
 			<div class="col-xs-3 key"><button class="number" value="7">7</button></div>
 			<div class="col-xs-3 key"><button class="number" value="8">8</button></div>
 			<div class="col-xs-3 key"><button class="number" value="9">9</button></div>
-			<div class="col-xs-3 key"><button class="operator"value="/">&#47;</button></div>
+			<div class="col-xs-3 key"><button class="operator" value="/">&#47;</button></div>
 		</div>
 
 		<div class="third row">
@@ -198,11 +217,12 @@ Known Issues and Resolutions
 </div>
 
 <script>
-		var theBrain = ["",""]; //array to store inputed numbers before and after the operator
-		var operator = "";
+		var theBrain = ["",""]; //array to store inputted numbers before and after the operator
+		var operator = null;
 		var arrayPointer = 0;
 
-		/* function to have scrolling text at start before any keys are pressed... not working at this time: just the basic outline code for now.
+		/* function to have scrolling text at start before any keys are pressed... not working at this time: just the
+		basic outline code for now.
 		function scroll() {
 			//$("span").append("Ready to calculate!");
 			$("#scrollText").css("left", $(".scroll").width());
@@ -212,37 +232,43 @@ Known Issues and Resolutions
 				});
 		}
 		*/
-		//when a digit is clicked, get value & save it to digit variable, run inputDisplay function which will set digit to display and save it to appropriate array position.
+		//when a digit is clicked, get value & save it to digit variable, run inputDisplay function which will set
+		// digit to display and save it to appropriate array position.
 		$(".number").click(function(){
 			var digit = $(this).attr("value");
 			console.log(digit);
 			inputDigit(digit);
 		})
 
-		//this function will take the input value and push it back to the calc screen as well as save the digit into our array
+		//this function will take the input value and push it back to the calc screen as well as save the digit into
+		// our array.
 		function inputDigit(digit) {
 			var value = $("#calculationDisplay").val();
 			var newValue = value + digit;
 			$("#calculationDisplay").val(newValue);
 			theBrain[arrayPointer] += digit;
 		}
-	
-		//when an operator is clicked
+
+		//when an operator is clicked, get operator selected, set global operator variable to selected operator, run
+		//inputoperator function.
 		$(".operator").click(function(){
-			var operatorSign = $(this).attr("value");
-			operator = operatorSign;
-			console.log(operatorSign);
-			inputOperator(operatorSign);
+			operator = $(this).attr("value");
+			console.log(operator);
+			inputOperator();
 		})
 
-		function inputOperator(operatorSign) {
+		//concatenate the operator to the first number and push it back up the display, set pointer to the the 2nd
+		//array position.
+		function inputOperator(operator) {
 			var value = $("#calculationDisplay").val();
-			var valueWithOperator = value + " " + operatorSign + " ";
+			console.log("i am the" + value);
+			var valueWithOperator = value + " " + operator + " ";
 			$("#calculationDisplay").val(valueWithOperator);
 			arrayPointer = 1;
-			operator = operatorSign;
 		}
 
+		//when the equal sign is clicked, we get the it, concatenate it, and push the back up to the display. We then
+		//run the calculate function.
 		$("#equalSign").click(function(){
 			var equalSign = $(this).attr("value");
 			console.log(equalSign);
@@ -251,13 +277,15 @@ Known Issues and Resolutions
 			$("#calculationDisplay").val(valueWithEqualSign);
 			calculate();
 		})
-
+		//enter key functionality
 		$(document).on("keyup", function(enter) {
 			if (enter.which == 13) {
   				calculate();
   			}
 		});
 
+		//the calculate function saves the array values into variables. It then runs the appropriate math which returns
+		//the result into a variable. The result is pushed out to the result display.
 		function calculate(num1,num2,operator) {
 			var num1 = theBrain[0];
 			var num2 = theBrain[1];
@@ -285,7 +313,7 @@ Known Issues and Resolutions
 			$("#resultDisplay").val(result);
 		}  
 
-		function subtractMe (num11, num2) {
+		function subtractMe (num1, num2) {
 			var result = parseInt(num1) - parseInt(num2);
 			$("#resultDisplay").val(result);
 		}
@@ -303,6 +331,7 @@ Known Issues and Resolutions
 			$("#resultDisplay").val(result);
 		}
 
+		//when the AC button is clicked, this resets all values and displays to their beginning values.
 		$("#allClear").click(function(){
 			digit = "";
 			theBrain = ["",""];

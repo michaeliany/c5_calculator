@@ -249,15 +249,15 @@ concatenate the operator to the first and second number. RESOLVED
 		//the inputDigit function will take the input value and push it back to the calc screen as well as save the
 		// digit into our array.
 		//DWP THIS ONE
-		function inputDigit(digit) {
+
 			//we save the existing display value into a variable.
-			var value = $("#calculationDisplay").val();
+
 			//we concatenate the existing value with the newest digit and save it into a new variable.
-			var newValue = value + digit;
+
 			//we push out this new concatenated value to the display.
-			$("#calculationDisplay").val(newValue);
+
 			//the new digit is added to our array.
-			theBrain[arrayPointer] += digit;
+
 		}
 
 		//when an operator is clicked, get operator selected, set global operator variable to selected operator, run
@@ -271,16 +271,15 @@ concatenate the operator to the first and second number. RESOLVED
 		//the inputOperator function takes in the operator as a parameter. Its role is to concatenate the operator to
 		//the first number and push it back up the display, set pointer to the the 2nd array position.
 		//DWP THIS ONE
-		function inputOperator(operator) {
+
 			//save the existing display into a variable.
-			var value = $("#calculationDisplay").val();
-			console.log("display value is ", value);
+
 			//concatenate the operator with the existing value and save it into a new variable.
-			var valueWithOperator = value + " " + operator + " ";
+
 			//push the new concatenated value to the display.
-			$("#calculationDisplay").val(valueWithOperator);
+
 			//set our array pointer to the 2nd position.
-			arrayPointer = 1;
+
 		}
 
 		//when the equal sign is clicked, we get it, concatenate it, and push the back up to the display. We then
@@ -305,30 +304,16 @@ concatenate the operator to the first and second number. RESOLVED
 		//the calculate function saves the array values into variables. It then runs the appropriate math which returns
 		//the result into a variable. The result is pushed out to the result display.
 		//the calculate function named and passes 3 parameters
-		function calculate(num1,num2,operator) {
-			//new variables that are assigned the respective values in our array
-			var num1 = theBrain[0];
-			var num2 = theBrain[1];
 
-			console.log(num1,num2)
+			//new variables that are assigned the respective values in our array
+
+
 			//this switch takes in operator so that the switch knows which case to follow
-			switch(operator) {
+
 				//each case will do the math and save it in result. break indicates a stop to that specific code block.
-				case"+": 
-					var result = addMe(num1,num2);
-					break;
-				case"-": 
-					var result = subtractMe(num1,num2);
-					break;
-				case"/": 
-					var result = multiplyMe(num1,num2);
-					break;
-				case"+": 
-					var result = divideMe(num1,num2);
-					break;
-			};
+
 			//the math result is then pushed up to display
-			$(".resultDisplay").val(result)
+
 		}
 
 		function addMe (num1, num2) {

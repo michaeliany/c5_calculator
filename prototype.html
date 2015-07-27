@@ -20,38 +20,37 @@ function c) pointer now directed at [1] position inside array
 5) 2nd number is pressed a) it is pushed up to display b) it is stored into array in [1] position
 6) subsequent digits follow step 3) only they are stored in [1] array position
 7) FUTURE! subsequent operators can be chosen and will create a new position in our array
-8) FUTURE! sign inversion will need to be accounted for
-9) Equal sign is pressed a) equal sign to display b) grab the 2 elements in our array c) convert them from strings to
-numbers d) call a function to run through our switch and the appropriate math function. e) spit out result to the
-display.
+8) sign inversion will need to be accounted for
+9) Equal sign is pressed a) equal sign to display b) grab the 2 elements in our array c) convert them 
+from strings to numbers d) call a function to run through our switch and the appropriate math function. e) spit out result to the display.
 10) User can then AllClear to start anew 
-11) FUTURE! user can press a new digit a) existing result is saved in [0] position, replacing the previous content
+11) user can press a new digit a) existing result is saved in [0] position, replacing the previous content
+12) FUTURE! number pad has full functionality.
 
 Known Issues and Resolutions
 1) display/results display is not showing up despite Bootstrap row and column. RESOLVED
 	a) I tried to add a height, no luck. maybe my code is wrong? 
-	b) I added some text, no luck.
-	c) 
+	b) I added some text and a placeholder - no luck.
+	c) I gave the inputs height and line height and also contained them inside their own divs.
 2) Scrolling text indicating that the calculator is ready rather than that annoying blinking 0.
 	a) not working, perhaps i am not appending it correctly.
 3) first button clicked is not showing number in display. RESOLVED
-	a) moved script from <head> to bottom of <body>. some of it is running now however, digits are still not showing in
-	display. The culprit is likely the inputDisplay function.
+	a) moved script from <head> to bottom of <body>. some of it is running now however, digits are still not showing in display. The culprit is likely the inputDisplay function.
 	b) testing the button click function and it seems i may not be targeting the proper element value.
-	c) added class to the button rather than the parent div. Changed from .val() to .attr() to get the value of the
-	button.
-4) display shows "7" even when other numbers are clicked. 2nd number clicked shows "undefined". operator displaying
-correctly however. RESOLVED
+	c) added class to the button rather than the parent div. Changed from .val() to .attr() to get the value of the button.
+4) display shows "7" even when other numbers are clicked. 2nd number clicked shows "undefined". 
+	operator displaying correctly however. RESOLVED
 	a) console is logging the correct digits but display is not.
 	b) reworked inputNumber function to concatenate properly. 
-5) while the first number is working fine, once an operator is selected, it wipes out the first #. I need to properly
-concatenate the operator to the first and second number. RESOLVED
+5) while the first number is working fine, once an operator is selected, it wipes out the first #. I 
+	need to properly concatenate the operator to the first and second number. RESOLVED
 	a) corrected inputOperator function to properly concatenate
 6) equal sign not getting pushed out to display. RESOLVED
 	a) found i was targeting a class when it is an id. corrected.
 7) equal sign not properly concatenating RESOLVED
 	a) corrected equalSign click function 
-8) calculate function is not working. will check to see if it is called properly. I am suspecting it is due to a typo.
+8) calculate function is not working. will check to see if it is called properly. I am suspecting it 
+	is due to a typo. RESOLVED
 	a) i changed the calculate function's parameter from operator to operatorSign. This did not work, i think it is
 	because i assigned operatorSign within the function so it isn't being recognized globally. RESOLVED
 	b) i tried to set the global variable operator to the value of local variable operatorSign but it didnt work. I
@@ -62,8 +61,15 @@ concatenate the operator to the first and second number. RESOLVED
 9) operator not being pushed out to display and hench, calculate function not being called. RESOLVED
 	a) rather than trying to get the operator button's value, i tried the html() and the text() attributes but no luck.
 	b) i was able to fix this by passing operator as a parameter in the inputOperator function.
-10) allClear is not working. Nothing happens once it is clicked. i thought i had written the appropriate code to reset
-	all values.
+10) allClear is not working. Nothing happens once it is clicked. i thought i had written the 
+	appropriate code to reset all values. RESOLVED
+	a) I was able to fix this by setting the value back to "" and then assigning that to the displays.
+11) Clear is not working. RESOLVED
+	a) i followed the allClear example and set the value back to what is stored in the array, assigning that into the display. At this time, Clear wipes out the operator selected as well but i can live with that for now.
+12) Enter key currently has no functionality. I am playing with the code.
+13) Sign inversion has a couple issues. First, while the inverse sign is being added to the front of
+	number, a 2nd click of the inverse button does not get rid of the minus sign. Another issue is that when the operator is clicked, it doesnt concatenate onto the display. It's like the operator buttons are disabled.
+	a) i tried putting the the concatenating into the if and else, respectively, but that did nothing.
 
 -->
 <!DOCTYPE html>
@@ -223,9 +229,10 @@ concatenate the operator to the first and second number. RESOLVED
 </div>
 
 <script>
+		/****Global Variables *****/
 		var theBrain = ["",""]; //array to store inputted numbers before and after the operator
-		var operator = null;
-		var arrayPointer = 0;
+		var operator = null; //set to null to start but value will change corresponding to operator selected
+		var arrayPointer = 0; //set to first position and will go to second position once operator is selected
 
 		/* function to have scrolling text at start before any keys are pressed... not working at this time: just the
 		basic outline code for now.
@@ -238,144 +245,282 @@ concatenate the operator to the first and second number. RESOLVED
 				});
 		}
 		*/
-		//when a digit is clicked, get value & save it to digit variable, run inputDisplay function which will set
-		// digit to display and save it to appropriate array position.
-		$(".number").click(function(){
-			var digit = $(this).attr("value");
+		/*************************
+ 		* NAME/TYPE: number click function
+ 		* PURPOSE: when a number 0-9 is clicked, it gets that value and saves it to a local variable
+ 		* digit. InputDigit function is then run that will set the digit to the display and save it to 
+ 		* the appropriate array position.
+ 		* GLOBAL/LOCAL VARIABLES: N/A
+ 		* PARAMETER(S): N/A
+ 		* FUNCTIONS CALLED: inputDigit()
+		**************************/
+		$(".number").click(function(){ //when a number is clicked...
+			var digit = $(this).attr("value"); //saved the value attribute to variable digit
 			console.log(digit);
-			inputDigit(digit);
+			inputDigit(digit); //call inputDigit function passing digit as parameter
 		})
 
-		//the inputDigit function will take the input value and push it back to the calc screen as well as save the
-		// digit into our array.
+		/*************************
+ 		* NAME/TYPE: inputDigit function
+ 		* PURPOSE: takes the digit value and pushes it out to the display. The existing display value * is saved into local variable value. existing value and new digit are then concatenated and 
+ 		* stored into a new local variable newValue. newValue is then pushed out to the display. 
+ 		* Lastly, theBrain, taking in arrayPointer as its parameter, saves the digit into the array.
+ 		* GLOBAL/LOCAL VARIABLES: theBrain, arrayPointer, value, newValue
+ 		* PARAMETER(S): digit
+ 		* FUNCTIONS CALLED: N/A
+		**************************/
 		//DWP THIS ONE
 		function inputDigit(digit) {
-			//we save the existing display value into a variable.
-			var value = $("#calculationDisplay").val();
-			//we concatenate the existing value with the newest digit and save it into a new variable.
-			var newValue = value + digit;
-			//we push out this new concatenated value to the display.
-			$("#calculationDisplay").val(newValue);
-			//the new digit is added to our array.
-			theBrain[arrayPointer] += digit;
+			var value = $("#calculationDisplay").val(); //we save the existing display value into value variable.
+			var newValue = value + digit; //we concatenate the existing value with the newest digit and save it into a newValue variable.
+			$("#calculationDisplay").val(newValue); //we push out this concatenated newValue to the display.
+			theBrain[arrayPointer] += digit; //the new digit is added to our array based on the arrayPointer position.
 		}
 
-		//when an operator is clicked, get operator selected, set global operator variable to selected operator, run
-		//inputOperator function.
-		$(".operator").click(function(){
-			operator = $(this).attr("value");
+		/*************************
+ 		* NAME/TYPE: operator click function
+ 		* PURPOSE: when an operator plus minus multiply or divide is clicked, it gets that value and 
+ 		* saves it to our global variable operator. inputOperator function is then called that will 
+ 		* take care of renewing the display and changing our array position.
+ 		* GLOBAL/LOCAL VARIABLES: operator
+ 		* PARAMETER(S): N/A
+ 		* FUNCTIONS CALLED: inputOperator()
+		**************************/
+		$(".operator").click(function(){ // when an operator is clicked...
+			operator = $(this).attr("value"); // we save the value attribute to variable operator 
 			console.log("operator is ", operator);
-			inputOperator(operator);
+			inputOperator(operator); //inputOperator function called, passing operator as parameter
 		})
 
-		//the inputOperator function takes in the operator as a parameter. Its role is to concatenate the operator to
-		//the first number and push it back up the display, set pointer to the the 2nd array position.
+		/*************************
+ 		* NAME/TYPE: inputOperator function
+ 		* PURPOSE: changes the display to reflect the operator selected. First, the current display is
+ 		* saved into local variable value. value is then concatenated with the operator and saved to 
+ 		* a local variable valueWithOperator which is then pushed out to the display. Lastly, the 
+ 		* arrayPointer is set to the [1] position.
+ 		* GLOBAL/LOCAL VARIABLES: operator, value, valueWithOperator, arrayPointer
+ 		* PARAMETER(S): operator
+ 		* FUNCTIONS CALLED: N/A
+		**************************/
 		//DWP THIS ONE
 		function inputOperator(operator) {
-			//save the existing display into a variable.
-			var value = $("#calculationDisplay").val();
+			var value = $("#calculationDisplay").val(); //save the existing display into a variable value
 			console.log("display value is ", value);
-			//concatenate the operator with the existing value and save it into a new variable.
-			var valueWithOperator = value + " " + operator + " ";
-			//push the new concatenated value to the display.
-			$("#calculationDisplay").val(valueWithOperator);
-			//set our array pointer to the 2nd position.
-			arrayPointer = 1;
+			var valueWithOperator = value + " " + operator + " "; //concatenate the operator with the existing value and save it into a new variable valueWithOperator
+			arrayPointer = 1; //set our array pointer to the 2nd position.
 		}
 
-		//when the equal sign is clicked, we get it, concatenate it, and push the back up to the display. We then
-		//run the calculate function.
-		$("#equalSign").click(function(){
-			var equalSign = $(this).attr("value");
+		/*************************
+ 		* NAME/TYPE: equal sign click function
+ 		* PURPOSE: when the equal sign is clicked, we refresh the display to reflect the equal sign.
+ 		* We then run the calculate function. First we save the equal sign to variable equalSign. We 
+ 		* also save the existing display as variable value. We then concatenate value with equalSign
+ 		* and save this into new variable valueWithEqualSign. We refresh display. Lastly we call the 
+ 		* calculate function passing parameters theBrain with both positions and the operator.
+ 		* GLOBAL/LOCAL VARIABLES: theBrain, operator, equalSign, value, valueWithEqualSign 
+ 		* PARAMETER(S): theBrain[0], theBrain[1], operator
+ 		* FUNCTIONS CALLED: calculate()
+		**************************/
+		$("#equalSign").click(function(){ //when the equal sign is clicked...
+			var equalSign = $(this).attr("value"); //save the attribute value to variable equalSign
 			console.log(equalSign);
-			var value = $("#calculationDisplay").val();
-			var valueWithEqualSign = value + " " + equalSign + " ";
+			var value = $("#calculationDisplay").val(); //save the existing display value into var value.
+			var valueWithEqualSign = value + " " + equalSign + " "; //concatenate value and equalSign and save it to new variable valueWithEqualSign
 			console.log("valueWithEqualSign is ", valueWithEqualSign);
-			$("#calculationDisplay").val(valueWithEqualSign);
+			$("#calculationDisplay").val(valueWithEqualSign); //push out valueWithEqualSign as the new value of the calculation display
 			console.log(theBrain, operator);
-			calculate(theBrain[0],theBrain[1], operator);
+			calculate(theBrain[0],theBrain[1], operator); //call the calculate function passing parameters theBrain[0], theBrain[1], and operator
 		})
-		//enter key functionality
+		
+		/*************************
+ 		* NAME/TYPE: Enter key click function
+ 		* PURPOSE: when the enter key is pressed, we intend it to have the same effect as pressing the 
+ 		* equal sign.
+ 		* GLOBAL/LOCAL VARIABLES: theBrain, operator, equalSign, value, valueWithEqualSign 
+ 		* PARAMETER(S): theBrain[0], theBrain[1], operator
+ 		* FUNCTIONS CALLED: calculate()
+		**************************/
 		$(document).on("keyup", function(enter) {
 			if (enter.which == 13) {
   				calculate();
   			}
 		});
 
-		//the calculate function saves the array values into variables. It then runs the appropriate math which returns
-		//the result into a variable. The result is pushed out to the result display.
-		//the calculate function named and passes 3 parameters
-		function calculate(num1,num2,operator) {
-			//new variables that are assigned the respective values in our array
-			var num1 = theBrain[0];
-			var num2 = theBrain[1];
-
+		/*************************
+ 		* NAME/TYPE: calculate function
+ 		* PURPOSE: the calculate function first determines via switch which math function to run.  
+ 		* It passes in num1, num2, and operator as its parameters. First, our respective array values 
+ 		* are saved into local variables num1 & num2. The switch then goes through the different 
+ 		* operator symbols and runs the appropriate math function. 
+ 		* GLOBAL/LOCAL VARIABLES: theBrain, operator, num1, num2 
+ 		* PARAMETER(S): num1, num2, operator
+ 		* FUNCTIONS CALLED: addMe(), subtractMe(), multiplyMe(), divideMe()
+		**************************/
+		function calculate(num1,num2,operator) { //calculate function passes num1, num2, & operator as parameters
+			var num1 = theBrain[0]; //theBrain[0] stored into variable num1
+			var num2 = theBrain[1]; //theBrain[1] stored into variable num2
 			console.log(num1,num2)
-			//this switch takes in operator so that the switch knows which case to follow
-			switch(operator) {
-				//each case will do the math and save it in result. break indicates a stop to that specific code block.
-				case"+": 
-					var result = addMe(num1,num2);
-					break;
-				case"-": 
-					var result = subtractMe(num1,num2);
-					break;
-				case"/": 
-					var result = multiplyMe(num1,num2);
-					break;
-				case"+": 
-					var result = divideMe(num1,num2);
-					break;
+			switch(operator) { //switch takes in operator as parameter
+				case"+": //case +
+					addMe(num1,num2); //calls addMe function passing num1 and num2 as parameters
+					break; //break
+				case"-": //case -
+					subtractMe(num1,num2); //calls subtractMe function passing num1 & num2 as parameters
+					break; //break
+				case"*": //case *
+					multiplyMe(num1,num2); //calls multiplyMe function passing num1 & num2 as parameters
+					break; //break
+				case"/": //case /
+					divideMe(num1,num2); //calls divideMe function passing num1 & num2 as parameters
+					break; //break
 			};
-			//the math result is then pushed up to display
-			$(".resultDisplay").val(result)
 		}
 
-		function addMe (num1, num2) {
-			var result = parseInt(num1) + parseInt(num2);
-			$("#resultDisplay").val(result);
+		/*************************
+ 		* NAME/TYPE: addMe function
+ 		* PURPOSE: the addMe function passes num1 & num2 as parameters. In one line of code, it 
+ 		* it transforms num1 & num2 from strings to numbers using parseFloat and adds the 2 numbers,
+ 		* saving the result into variable result. Lastly, it pushes out the result into the result 
+ 		* display.
+ 		* GLOBAL/LOCAL VARIABLES: result
+ 		* PARAMETER(S): num1, num2
+ 		* FUNCTIONS CALLED: N/A
+		**************************/
+		function addMe (num1, num2) { //addMe passes num1 and num2 as parameters
+			var result = parseInt(num1) + parseInt(num2); //num1 & num2 are transformed from string to number and added together, saving the result into var result
+			$("#resultDisplay").val(result); //the math result is then pushed up to result display
 		}  
 
-		function subtractMe (num1, num2) {
-			var result = parseInt(num1) - parseInt(num2);
-			$("#resultDisplay").val(result);
+		/*************************
+ 		* NAME/TYPE: subtractMe function
+ 		* PURPOSE: the subtractMe function passes num1 & num2 as parameters. In one line of code, it 
+ 		* it transforms num1 & num2 from strings to numbers using parseFloat and subtracts num2 from
+ 		* num1, saving the result into variable result. Lastly, it pushes out the result into the
+ 		* result display.
+ 		* GLOBAL/LOCAL VARIABLES: result
+ 		* PARAMETER(S): num1, num2
+ 		* FUNCTIONS CALLED: N/A
+		**************************/
+		function subtractMe (num1, num2) { //subtractMe passes num1 and num2 as parameters
+			var result = parseInt(num1) - parseInt(num2); //num1 & num2 are transformed from string to number and subtraction is done, saving the result into var result
+			$("#resultDisplay").val(result); //the math result is then pushed up to result display
 		}
 
-		function multiplyMe (num1, num2) {
-			var result = parseInt(num1) * parseInt(num2);
-			$("#resultDisplay").val(result);
+		/*************************
+ 		* NAME/TYPE: multiplyMe function
+ 		* PURPOSE: the multiplyMe function passes num1 & num2 as parameters. In one line of code, it 
+ 		* it transforms num1 & num2 from strings to numbers using parseFloat and multiplies num1 & 
+ 		* num2 together, saving the result into variable result. Lastly, it pushes out the result into 
+ 		* the result display.
+ 		* GLOBAL/LOCAL VARIABLES: result
+ 		* PARAMETER(S): num1, num2
+ 		* FUNCTIONS CALLED: N/A
+		**************************/
+		function multiplyMe (num1, num2) { //multiplyMe passes num1 and num2 as parameters
+			var result = parseInt(num1) * parseInt(num2); //num1 & num2 are transformed from string to number and multiplied together, saving the result into var result
+			$("#resultDisplay").val(result); //the math result is then pushed up to result display
 		}
 
-		function divideMe (num1, num2) {
-			if (operand2 == 0) {
-				return NaN;
+		/*************************
+ 		* NAME/TYPE: divideMe function
+ 		* PURPOSE: the divideMe function passes num1 & num2 as parameters. In one line of code, it 
+ 		* it transforms num1 & num2 from strings to numbers using parseFloat and divides num1 by 
+ 		* num2, saving the result into variable result. Lastly, it pushes out the result into 
+ 		* the result display.
+ 		* GLOBAL/LOCAL VARIABLES: result
+ 		* PARAMETER(S): num1, num2
+ 		* FUNCTIONS CALLED: N/A
+		**************************/
+		function divideMe (num1, num2) { //divideMe passes num1 and num2 as parameters
+			if (num2 == 0) { //we check if num2 is 0
+				return NaN; //if so, we return NaN
 			}
-			var result = parseInt(num1) / parseInt(num2);
-			$("#resultDisplay").val(result);
+			else { //else...
+			var result = parseFloat(num1) / parseFloat(num2); //num1 & num2 are transformed from string to number and division is done, saving the result into var result
+			$("#resultDisplay").val(result); //the math result is then pushed up to result display
+			}
 		}
 
-		//when clear is clicked, this resets the display to the previous value and wipes clean the digit variable.
-		//It also resets the appropriate array memory.
-		$("#clear").click(function(){
-			digit = "";
-			$("#calculationDisplay").val(value);
-			if(arrayPointer == 0) {
-				theBrain[0] = "";
+		/*************************
+ 		* NAME/TYPE: Clear key click function
+ 		* PURPOSE: when the clear key is pressed, it wipes out the most recently entered number and  
+ 		* operator from the appropriate array and display. This is done by first setting the digit
+ 		* to "". It will then set the array to "" and clear the display.
+ 		* GLOBAL/LOCAL VARIABLES: theBrain, arrayPointer 
+ 		* PARAMETER(S): N/A
+ 		* FUNCTIONS CALLED: N/A
+		**************************/
+		$("#clear").click(function(){ //when clear is clicked...
+			digit = ""; //digit is set to ""
+			if(arrayPointer == 0) { //if arrayPointer is in [0] position
+				theBrain[0] = ""; //theBrain[0] is set to ""
+				$("#calculationDisplay").val(theBrain[0]); //the display is set to theBrain[0]
+				//$("#calculationDisplay") = simpleClear;
 			}
-			else {
-				theBrain[1] = "";
+			else { //else...
+				theBrain[1] = ""; //theBrain[1] is set to ""
+				$("#calculationDisplay").val(theBrain[0]); //display set to theBrain[0]
 			}
 		});
 
-		//when the AC button is clicked, this resets all values and displays to their beginning values.
-		$("#allClear").click(function(){
-			digit = "";
-			theBrain = ["",""];
-			arrayPointer = 0;
-			operator = "";
-			$("calculationDisplay").val("0");
-			$("resultDisplay").val("0");
-		})
+		/*************************
+ 		* NAME/TYPE: All Clear key click function
+ 		* PURPOSE: when the AC key is pressed, it wipes out everything and resets to beginning 
+ 		* values.  
+ 		* GLOBAL/LOCAL VARIABLES: digit, theBrain, arrayPointer, operator
+ 		* PARAMETER(S): N/A
+ 		* FUNCTIONS CALLED: N/A
+		**************************/
+		$("#allClear").click(function(){ //when the AC button is clicked...
+			digit = ""; //digit is set to ""
+			theBrain = ["",""]; //memory wiped clean: theBrain["",""]
+			arrayPointer = 0; //arrayPointer reset to 0 position;
+			operator = ""; //operator reset to ""
+			var clearCalculation = $("#calculationDisplay").val(""); //calculation display value set to "" and saved into variable clearCalculation
+			var clearResult = $("#resultDisplay").val(""); //result display value set to "" and saved into variable clearResult
+			$("#calculationDisplay") = clearCalculation; //calculation display assigned to clearCalculation
+			$("#resultDisplay") = clearResult; //result display assigned to clearResult
+		});
+
+		/*************************
+ 		* NAME/TYPE: sign inversion key click function
+ 		* PURPOSE: when the +/- key is pressed, 
+ 		* GLOBAL/LOCAL VARIABLES:  
+ 		* PARAMETER(S): N/A
+ 		* FUNCTIONS CALLED: N/A
+		**************************/
+		$("#signInversion").click(function(){
+			var value = $("#calculationDisplay").val();
+			var inverseSign = "+";
+			if(inverseSign == "+") {
+				inverseSign = "-";
+				} else {
+				inverseSign = "+";
+				}
+			var valueWithInverseSign = inverseSign + value;
+			console.log("valueWithInverseSign is ", valueWithInverseSign);
+			$("#calculationDisplay").val(valueWithInverseSign);
+			theBrain[arrayPointer] = valueWithInverseSign; //the valueWithInverseSign is overwrites the existing value in our array based on the arrayPointer position.
+			
+		});
+
+		/*************************
+ 		* NAME/TYPE: decimal key click function
+ 		* PURPOSE: when the decimal button is clicked, we concatenate it with the existing number and 
+ 		* save it to theBrain array.
+ 		* GLOBAL/LOCAL VARIABLES: theBrain, decimalSign, value, valueWithDecimalSign 
+ 		* PARAMETER(S): arrayPointer
+ 		* FUNCTIONS CALLED: N/A
+		**************************/
+		$("#decimal").click(function(){
+			var decimalSign = $(this).attr("value");
+			console.log(decimalSign);
+			var value = $("#calculationDisplay").val();
+			var valueWithDecimalSign = value + decimalSign; //concatenate value and decimalSign and save it to new variable valueWithDecimalSign
+			console.log("valueWithDecimalSign is ", valueWithDecimalSign);
+			$("#calculationDisplay").val(valueWithDecimalSign); //push out valueWithEqualSign as the new value of the calculation display
+			theBrain[arrayPointer] += decimalSign; //the decimal is added to our array based on the arrayPointer position.
+		});
 
 	</script>
 </body>

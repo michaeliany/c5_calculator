@@ -70,6 +70,7 @@ Known Issues and Resolutions
 13) Sign inversion has a couple issues. First, while the inverse sign is being added to the front of
 	number, a 2nd click of the inverse button does not get rid of the minus sign. Another issue is that when the operator is clicked, it doesnt concatenate onto the display. It's like the operator buttons are disabled.
 	a) i tried putting the the concatenating into the if and else, respectively, but that did nothing.
+	b) i tried to provide specific instructions for each scenario but still no luck. neg sign does not disappear, additional neg signs can be added on, and operator key seems disabled, even when sign inversion button is not clicked.
 
 -->
 <!DOCTYPE html>
@@ -233,6 +234,7 @@ Known Issues and Resolutions
 		var theBrain = ["",""]; //array to store inputted numbers before and after the operator
 		var operator = null; //set to null to start but value will change corresponding to operator selected
 		var arrayPointer = 0; //set to first position and will go to second position once operator is selected
+		var inverseSign = "";
 
 		/* function to have scrolling text at start before any keys are pressed... not working at this time: just the
 		basic outline code for now.
@@ -255,7 +257,7 @@ Known Issues and Resolutions
  		* FUNCTIONS CALLED: inputDigit()
 		**************************/
 		$(".number").click(function(){ //when a number is clicked...
-			var digit = $(this).attr("value"); //saved the value attribute to variable digit
+			var digit = $(this).attr("value"); //saved the value attribute to variable digit. we use the this keyword to refer back to the button clicked.
 			console.log(digit);
 			inputDigit(digit); //call inputDigit function passing digit as parameter
 		})
@@ -287,7 +289,7 @@ Known Issues and Resolutions
  		* FUNCTIONS CALLED: inputOperator()
 		**************************/
 		$(".operator").click(function(){ // when an operator is clicked...
-			operator = $(this).attr("value"); // we save the value attribute to variable operator 
+			operator = $(this).attr("value"); // we save the value attribute to variable operator. we use the this keyword to refer back to the button clicked. 
 			console.log("operator is ", operator);
 			inputOperator(operator); //inputOperator function called, passing operator as parameter
 		})
@@ -322,7 +324,7 @@ Known Issues and Resolutions
  		* FUNCTIONS CALLED: calculate()
 		**************************/
 		$("#equalSign").click(function(){ //when the equal sign is clicked...
-			var equalSign = $(this).attr("value"); //save the attribute value to variable equalSign
+			var equalSign = $(this).attr("value"); //save the attribute value to variable equalSign. we use the this keyword to refer back to the button clicked.
 			console.log(equalSign);
 			var value = $("#calculationDisplay").val(); //save the existing display value into var value.
 			var valueWithEqualSign = value + " " + equalSign + " "; //concatenate value and equalSign and save it to new variable valueWithEqualSign
@@ -484,23 +486,30 @@ Known Issues and Resolutions
 
 		/*************************
  		* NAME/TYPE: sign inversion key click function
- 		* PURPOSE: when the +/- key is pressed, 
- 		* GLOBAL/LOCAL VARIABLES:  
- 		* PARAMETER(S): N/A
+ 		* PURPOSE: when the +/- key is pressed, a "-" is added to the number since the default 
+ 		* assignment of inverseSign is "" or if the number is "+". We concatenate and refresh the 
+ 		* display. We also store this negative number to our array. If the sign inversion button is
+ 		* clicked again, since the number is already a negative, we revert back to the original display
+ 		* value and change our array value back.
+ 		* GLOBAL/LOCAL VARIABLES: inverseSign, value, valueWithInverseSign, theBrain, arrayPointer
+ 		* PARAMETER(S): valueWithInverseSign, arrayPointer
  		* FUNCTIONS CALLED: N/A
 		**************************/
-		$("#signInversion").click(function(){
-			var value = $("#calculationDisplay").val();
-			var inverseSign = "+";
-			if(inverseSign == "+") {
-				inverseSign = "-";
-				} else {
-				inverseSign = "+";
-				}
-			var valueWithInverseSign = inverseSign + value;
-			console.log("valueWithInverseSign is ", valueWithInverseSign);
-			$("#calculationDisplay").val(valueWithInverseSign);
-			theBrain[arrayPointer] = valueWithInverseSign; //the valueWithInverseSign is overwrites the existing value in our array based on the arrayPointer position.
+		$("#signInversion").click(function(){ //when the sign inversion button is clicked...
+			var value = $("#calculationDisplay").val(); // store current display into variable value
+
+			if((inverseSign == "") || (inverseSign == "+")) { //if inverseSign is ""
+				inverseSign = "-"; //assign "-" to inverse sign
+				var valueWithInverseSign = inverseSign + value; //concatenate "-" to beginning of value
+				console.log("valueWithInverseSign is ", valueWithInverseSign);
+				$("#calculationDisplay").val(valueWithInverseSign); //refresh display with this new value
+				theBrain[arrayPointer] = valueWithInverseSign; //the valueWithInverseSign overwrites the existing value in our array based on the arrayPointer position.
+			} 
+			else { //if inverseSign == "-"
+				inverseSign = ""; //assign "" to inverseSign
+				$("#calculationDisplay").val(value); //push our saved display value back to display
+				theBrain[arrayPointer] = value; // value overwrites the existing value in our array based on the arrayPointer position.
+			}
 			
 		});
 

@@ -307,6 +307,7 @@ Known Issues and Resolutions
 			var value = $("#calculationDisplay").val(); //save the existing display into a variable value
 			console.log("display value is ", value);
 			var valueWithOperator = value + " " + operator + " "; //concatenate the operator with the existing value and save it into a new variable valueWithOperator
+			$("#calculationDisplay").val(valueWithOperator); // update display to show operator
 			arrayPointer = 1; //set our array pointer to the 2nd position.
 		}
 
@@ -356,7 +357,7 @@ Known Issues and Resolutions
  		* PARAMETER(S): num1, num2, operator
  		* FUNCTIONS CALLED: addMe(), subtractMe(), multiplyMe(), divideMe()
 		**************************/
-		function calculate(num1,num2,operator) { //calculate function passes num1, num2, & operator as parameters
+		function calculate() { 
 			var num1 = theBrain[0]; //theBrain[0] stored into variable num1
 			var num2 = theBrain[1]; //theBrain[1] stored into variable num2
 			console.log(num1,num2)
@@ -388,6 +389,7 @@ Known Issues and Resolutions
 		**************************/
 		function addMe (num1, num2) { //addMe passes num1 and num2 as parameters
 			var result = parseInt(num1) + parseInt(num2); //num1 & num2 are transformed from string to number and added together, saving the result into var result
+			return result;
 			$("#resultDisplay").val(result); //the math result is then pushed up to result display
 		}  
 
@@ -403,6 +405,7 @@ Known Issues and Resolutions
 		**************************/
 		function subtractMe (num1, num2) { //subtractMe passes num1 and num2 as parameters
 			var result = parseInt(num1) - parseInt(num2); //num1 & num2 are transformed from string to number and subtraction is done, saving the result into var result
+			return result;
 			$("#resultDisplay").val(result); //the math result is then pushed up to result display
 		}
 
@@ -418,6 +421,7 @@ Known Issues and Resolutions
 		**************************/
 		function multiplyMe (num1, num2) { //multiplyMe passes num1 and num2 as parameters
 			var result = parseInt(num1) * parseInt(num2); //num1 & num2 are transformed from string to number and multiplied together, saving the result into var result
+			return result;
 			$("#resultDisplay").val(result); //the math result is then pushed up to result display
 		}
 
@@ -437,6 +441,7 @@ Known Issues and Resolutions
 			}
 			else { //else...
 			var result = parseFloat(num1) / parseFloat(num2); //num1 & num2 are transformed from string to number and division is done, saving the result into var result
+			return result;
 			$("#resultDisplay").val(result); //the math result is then pushed up to result display
 			}
 		}
